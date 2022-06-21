@@ -235,7 +235,7 @@ def new_transaction():
 
     # Check that the required fields are in the POST'ed data
     required = ['sender', 'recipient', 'amount']
-    if not all(k in values for k in required):
+    if any(k not in values for k in required):
         return 'Missing values', 400
 
     # Create a new Transaction
@@ -274,9 +274,7 @@ def register_nodes():
 
 @app.route('/nodes/resolve', methods=['GET'])
 def consensus():
-    replaced = blockchain.resolve_conflicts()
-
-    if replaced:
+    if replaced := blockchain.resolve_conflicts():
         response = {
             'message': 'Our chain was replaced',
             'new_chain': blockchain.chain
